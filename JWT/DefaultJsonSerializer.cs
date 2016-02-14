@@ -1,4 +1,4 @@
-﻿using System.Web.Script.Serialization;
+﻿using UnityEngine;
 
 namespace JWT
 {
@@ -7,8 +7,6 @@ namespace JWT
     /// </summary>
     public class DefaultJsonSerializer : IJsonSerializer
     {
-        private readonly JavaScriptSerializer serializer = new JavaScriptSerializer();
-
         /// <summary>
         /// Serialize an object to JSON string
         /// </summary>
@@ -16,7 +14,7 @@ namespace JWT
         /// <returns>JSON string</returns>
         public string Serialize(object obj)
         {
-            return serializer.Serialize(obj);
+            return JsonUtility.ToJson(obj);
         }
 
         /// <summary>
@@ -27,7 +25,7 @@ namespace JWT
         /// <returns>typed object</returns>
         public T Deserialize<T>(string json)
         {
-            return serializer.Deserialize<T>(json);
+            return JsonUtility.FromJson<T>(json);
         }
     }
 }
