@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,11 +19,6 @@ namespace JWT
     public static class JsonWebToken
     {
         private static readonly IDictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
-
-        /// <summary>
-        /// Pluggable JSON Serializer
-        /// </summary>
-        public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
 
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
@@ -53,8 +49,8 @@ namespace JWT
                 { "alg", algorithm.ToString() }
             };
 
-            byte[] headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
+            byte[] headerBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header));
+            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload));
 
             segments.Add(Base64UrlEncode(headerBytes));
             segments.Add(Base64UrlEncode(payloadBytes));
@@ -128,7 +124,7 @@ namespace JWT
             var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
             var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
 
-            var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
+            var headerData = JsonConvert.DeserializeObject<Dictionary<string, object>>(headerJson);
 
             if (verify)
             {
@@ -153,7 +149,7 @@ namespace JWT
             }
 
             // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
-            var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+            var payloadData = JsonConvert.DeserializeObject<Dictionary<string, object>>(payloadJson);
             if (payloadData.ContainsKey("exp") && payloadData["exp"] != null)
             {
                 // safely unpack a boxed int 
@@ -199,7 +195,7 @@ namespace JWT
         public static object DecodeToObject(string token, byte[] key, bool verify = true)
         {
             var payloadJson = Decode(token, key, verify);
-            var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+            var payloadData = JsonConvert.DeserializeObject<Dictionary<string, object>>(payloadJson);
             return payloadData;
         }
 
@@ -228,7 +224,7 @@ namespace JWT
         public static T DecodeToObject<T>(string token, byte[] key, bool verify = true)
         {
             var payloadJson = Decode(token, key, verify);
-            var payloadData = JsonSerializer.Deserialize<T>(payloadJson);
+            var payloadData = JsonConvert.DeserializeObject<T>(payloadJson);
             return payloadData;
         }
 
