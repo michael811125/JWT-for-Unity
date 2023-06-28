@@ -2,6 +2,9 @@
 
 This library supports generating and decoding [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10).
 
+## Dependencies
+Add package by name [com.unity.nuget.newtonsoft-json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity/wiki/Install-official-via-UPM) to Package Manager.
+
 ## Installation
 
 Add https://github.com/michael811125/JwtForUnity.git to Package Manager.
